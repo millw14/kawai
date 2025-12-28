@@ -1,0 +1,10 @@
+{
+  "rpc_url": "https://api.devnet.solana.com",
+  "accounts": [
+    "YourPubkeyHere1",
+    "YourPubkeyHere2"
+  ],
+  "scam_detect": true,
+  "no_notifications": false
+}
+
