@@ -1,67 +1,87 @@
-# 🌸 Kawai Monitor - Waifu-Themed Solana RPC Monitor 💕
+# Kawai Monitor
 
-A cute, waifu-themed Solana monitoring tool that watches accounts, transactions, and slots via RPC WebSockets. Get desktop notifications, CSV logging, and scam detection—all with adorable messages!
+**A lightweight, real-time Solana blockchain monitoring tool for tracking accounts, transactions, and network activity.**
+
+---
+
+## Overview
+
+Kawai Monitor is a standalone Rust application that connects to Solana RPC endpoints to monitor account balances, track transactions, and provide real-time alerts. Built for reliability and ease of use, it offers desktop notifications, CSV logging, and optional scam detection.
 
 ![Kawai Monitor](photo_5940298091359570915_x-removebg-preview.png)
 
-## ✨ Features
+---
 
-- 🐾 **Multi-Account Monitoring** - Watch multiple Solana accounts simultaneously
-- 😻 **Transaction Tracking** - Real-time transaction notifications
-- 🌸 **Slot Updates** - Monitor validator slot progression
-- ⚠️ **Scam Detection** - Basic heuristics to flag suspicious transactions
-- 📊 **CSV Logging** - All events logged to `kawai_logs.csv`
-- 🔔 **Desktop Notifications** - Get alerts for important events
-- 💕 **Waifu-Themed** - Cute messages and emojis throughout!
+## Features
 
-## 🚀 Quick Start
+| Feature | Description |
+|---------|-------------|
+| **Multi-Account Monitoring** | Track multiple Solana accounts simultaneously |
+| **Real-Time Updates** | Receive instant notifications for balance changes and transactions |
+| **Desktop Notifications** | System-level alerts for important events |
+| **CSV Logging** | Comprehensive event logging for analysis and auditing |
+| **Scam Detection** | Optional heuristics to flag suspicious transactions |
+| **Slot Tracking** | Monitor validator slot progression |
+| **Cross-Platform** | Works on Windows, macOS, and Linux |
+| **Zero Configuration** | Run immediately with sensible defaults |
 
-### Option 1: Download Pre-built Binary
+---
 
-1. Go to [Releases](https://github.com/yourusername/kawai/releases)
-2. Download the binary for your OS:
-   - Windows: `kawai.exe`
-   - Mac: `kawai-mac`
-   - Linux: `kawai-linux`
-3. Run it:
-   ```bash
-   ./kawai --rpc-url https://api.devnet.solana.com --accounts YOUR_PUBKEY
-   ```
+## Quick Start
 
-### Option 2: Build from Source
+### Download Pre-built Binary
 
-**Prerequisites:**
-- Rust (install from https://rustup.rs/)
+1. Visit the [Releases](https://github.com/millw14/kawai/releases) page
+2. Download the binary for your operating system:
+   - **Windows**: `kawai.exe`
+   - **macOS**: `kawai-mac`
+   - **Linux**: `kawai-linux`
+3. Run from terminal:
 
-**Build:**
 ```bash
-# Clone the repo
-git clone https://github.com/yourusername/kawai.git
-cd kawai
-
-# Build
-cargo build --release
-
-# Run
-./target/release/kawai --rpc-url https://api.devnet.solana.com
+./kawai --accounts YOUR_PUBKEY_HERE
 ```
 
-## 📖 Usage
+### Build from Source
 
-### Basic Usage
+**Prerequisites:**
+- [Rust](https://rustup.rs/) 1.75 or later
+
+**Build Steps:**
 
 ```bash
-# Monitor a specific account
-./kawai --accounts YOUR_PUBKEY_HERE
+# Clone the repository
+git clone https://github.com/millw14/kawai.git
+cd kawai
 
-# Monitor multiple accounts
+# Build the release binary
+cargo build --release
+
+# Run the application
+./target/release/kawai --accounts YOUR_PUBKEY_HERE
+```
+
+---
+
+## Usage
+
+### Command Line Options
+
+```bash
+# Monitor a single account
+./kawai --accounts YOUR_PUBKEY
+
+# Monitor multiple accounts (comma-separated)
 ./kawai --accounts pubkey1,pubkey2,pubkey3
+
+# Use a custom RPC endpoint
+./kawai --rpc-url https://api.mainnet-beta.solana.com --accounts YOUR_PUBKEY
 
 # Enable scam detection
 ./kawai --accounts YOUR_PUBKEY --scam-detect
 
-# Use a different RPC endpoint
-./kawai --rpc-url https://api.mainnet-beta.solana.com --accounts YOUR_PUBKEY
+# Adjust polling interval (seconds)
+./kawai --accounts YOUR_PUBKEY --interval 10
 
 # Disable desktop notifications
 ./kawai --accounts YOUR_PUBKEY --no-notifications
@@ -69,134 +89,190 @@ cargo build --release
 
 ### Configuration File
 
-Create `kawai_config.json` for persistent settings:
+Create a `kawai_config.json` file in the same directory for persistent settings:
 
 ```json
 {
   "rpc_url": "https://api.devnet.solana.com",
-  "accounts": ["YourPubkeyHere1", "YourPubkeyHere2"],
+  "accounts": [
+    "YourPubkeyHere1",
+    "YourPubkeyHere2"
+  ],
   "scam_detect": true,
-  "no_notifications": false
+  "no_notifications": false,
+  "interval": 5
 }
 ```
 
-The tool will automatically load this config if present.
+The application will automatically load this configuration file if present.
 
-## 🎯 What It Monitors
+---
 
-- **Account Updates**: Balance changes, data modifications
-- **Transactions**: All confirmed transactions on the network
-- **Slot Updates**: Validator slot progression and status
-- **Suspicious Activity**: Large transfers, potential scams (when enabled)
+## What It Monitors
 
-## 📊 Output
+- **Account Updates**: Balance changes and account data modifications
+- **Transaction Activity**: Confirmed transactions on monitored accounts
+- **Slot Progression**: Network slot updates and validator status
+- **Suspicious Activity**: Large transfers and potentially fraudulent transactions (when enabled)
+
+---
+
+## Output Examples
 
 ### Console Output
+
 ```
 ╔═══════════════════════════════════════════════════════╗
-║     🌸  Kawai Monitor - Solana RPC Monitor  🌸        ║
-║          Nyaa~ Ready to monitor Solana~ 💕           ║
+║                                                       ║
+║         🌸  Kawai Monitor - Your Helper  🌸         ║
+║                                                       ║
 ╚═══════════════════════════════════════════════════════╝
 
-🔗 Connecting to https://api.devnet.solana.com... 🐱
-✅ Connected! Starting monitoring... 🎉
+Connecting to https://api.devnet.solana.com...
+Connected! Starting monitoring...
 
-🐾 Kawaii Alert! Account ABC123... updated to 1000000 lamports on slot 12345!
-😻 Purr~ Transaction DEF456... confirmed on slot 12346!
-🌸 Slot update: Slot 12347 (parent: 12346)
+Account ABC123... updated: 1000000 lamports (Slot: 12345)
+Transaction DEF456... confirmed (Slot: 12346)
+Slot update: 12347 (Parent: 12346)
 ```
 
-### CSV Logging
-All events are logged to `kawai_logs.csv`:
+### CSV Log Format
+
+All events are automatically logged to `kawai_logs.csv`:
+
 ```csv
 Type,Details,Slot/Timestamp
-Account,Kawaii Alert! Account ABC123... updated,12345
-Tx,Purr~ Transaction DEF456... confirmed,12346
-Slot,Slot update: Slot 12347,12347
+Account,Account ABC123... updated to 1000000 lamports,12345
+Tx,Transaction DEF456... confirmed,12346
+Slot,Slot update: 12347,12347
 ```
 
-## 🛠️ Building for Different Platforms
+---
+
+## Building for Different Platforms
+
+### Windows
 
 ```bash
-# Windows
 cargo build --release --target x86_64-pc-windows-msvc
+```
 
-# Mac (Intel)
+### macOS (Intel)
+
+```bash
 cargo build --release --target x86_64-apple-darwin
+```
 
-# Mac (Apple Silicon)
+### macOS (Apple Silicon)
+
+```bash
 cargo build --release --target aarch64-apple-darwin
+```
 
-# Linux
+### Linux
+
+```bash
 cargo build --release --target x86_64-unknown-linux-gnu
 ```
 
-## 🎨 Customization
+---
 
-### Add More Waifu Messages
+## Requirements
 
-Edit `src/main.rs` and customize the messages:
-- `println!("Nyaa~ ...")` - Loading messages
-- `println!("🐾 Kawaii Alert! ...")` - Account updates
-- `println!("😻 Purr~ ...")` - Transaction notifications
-- `println!("🌸 ...")` - Slot updates
+- **Rust**: Version 1.75 or later (for building from source)
+- **Internet Connection**: Required for RPC endpoint communication
+- **Desktop Notifications** (optional):
+  - **Windows**: Built-in support
+  - **macOS**: macOS 10.9 or later
+  - **Linux**: `libnotify` library (typically pre-installed)
 
-### Enhance Scam Detection
+---
 
-Modify the `is_suspicious()` function in `src/main.rs` to add:
-- Blacklist checking
-- Pattern matching
-- Heuristic improvements
-- Integration with scam databases
+## Troubleshooting
 
-## 📝 Requirements
+### Connection Issues
 
-- Rust 1.75+ (for building from source)
-- Internet connection (for RPC/WebSocket)
-- Desktop notifications require:
-  - Windows: Built-in support
-  - Mac: macOS 10.9+
-  - Linux: `libnotify` (usually pre-installed)
+- Verify your internet connection is active
+- Confirm the RPC URL is correct and accessible
+- Try alternative RPC endpoints (e.g., Helius, QuickNode, Triton)
+- Check if your firewall is blocking connections
 
-## 🐛 Troubleshooting
+### Notification Problems
 
-### Connection Errors
-- Check your internet connection
-- Verify the RPC URL is correct
-- Try a different RPC endpoint (e.g., Helius, QuickNode)
-
-### No Notifications
-- Windows: Check notification settings
-- Mac: Check System Preferences > Notifications
-- Linux: Install `libnotify`: `sudo apt-get install libnotify-bin`
+- **Windows**: Verify notification settings in Windows Settings > System > Notifications
+- **macOS**: Check System Preferences > Notifications > kawai
+- **Linux**: Install libnotify: `sudo apt-get install libnotify-bin` (Ubuntu/Debian) or equivalent
 
 ### Build Errors
+
 ```bash
-# Update dependencies
+# Update all dependencies
 cargo update
 
-# Clean and rebuild
+# Clean build artifacts and rebuild
 cargo clean
 cargo build --release
 ```
 
-## 🎁 Features Roadmap
+### Common Issues
 
-- [ ] GUI version (using Tauri)
-- [ ] Web dashboard
-- [ ] Advanced scam detection patterns
-- [ ] Price tracking integration
-- [ ] Discord/Telegram notifications
-- [ ] Historical data analysis
-
-## 📄 License
-
-MIT License - Feel free to use and modify!
-
-## 💕 Credits
-
-Built with love and waifu energy~ 🌸
+- **"Account not found"**: Verify the public key is correct and the account exists on the network
+- **"RPC endpoint error"**: The endpoint may be rate-limited or unavailable; try a different endpoint
+- **High CPU usage**: Increase the polling interval with `--interval` flag (default: 5 seconds)
 
 ---
 
-**Nyaa~ Enjoy monitoring Solana! 💕🐾**
+## Customization
+
+### Modifying Messages
+
+Edit `src/main.rs` to customize console output messages and notification text.
+
+### Enhancing Scam Detection
+
+Modify the detection logic in `src/main.rs` to add:
+- Blacklist checking
+- Pattern recognition
+- Advanced heuristics
+- Integration with external scam databases
+
+### Adding Features
+
+The codebase is structured for easy extension. Key areas:
+- `src/main.rs`: Main application logic and monitoring loop
+- Configuration handling: Add new config options in the `Config` struct
+- Notification system: Extend with custom notification handlers
+
+---
+
+## Roadmap
+
+- [ ] Graphical user interface (Tauri-based)
+- [ ] Web dashboard for remote monitoring
+- [ ] Enhanced scam detection with ML-based patterns
+- [ ] Price tracking and portfolio valuation
+- [ ] Discord and Telegram notification integration
+- [ ] Historical data analysis and reporting
+- [ ] Multi-network support (extend to other chains)
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## Acknowledgments
+
+Built with the Solana Rust SDK and Tokio async runtime.
+
+---
+
+**For questions, issues, or feature requests, please open an issue on GitHub.**
