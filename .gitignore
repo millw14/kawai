@@ -24,9 +24,12 @@ kawai_logs.csv
 kawai_config.json
 test-ledger/
 
-# Ignore all .md files except README.md and VISION.md
-*.md
+# Ignore misc .md files in root except README.md and VISION.md
+/*.md
 !README.md
 !VISION.md
+
+# But allow docs folder
+!docs/
 
 
