@@ -76,7 +76,7 @@ kawai anchor test
 
 | Command | Description |
 |---------|-------------|
-| `kawai validator` | Local test validator (Docker/WSL/Cloud backends) |
+| `kawai validator` | Native Windows test validator (no external tools!) |
 | `kawai build` | Compile Solana programs to `.so` |
 | `kawai anchor` | Full Anchor framework support |
 | `kawai deploy` | Deploy programs to any cluster |
@@ -107,24 +107,29 @@ kawai anchor test
 Run a local Solana test validator on Windows:
 
 ```powershell
-# Start with auto-detected backend
+# Start native Windows validator
 kawai validator start
 
-# Use specific backend
-kawai validator start --backend docker
-kawai validator start --backend wsl
+# With options
+kawai validator start --port 8899 --reset
 
 # Check status
 kawai validator status
 
-# View logs
+# View epoch info
 kawai validator logs
 
-# Stop
+# Stop validator
 kawai validator stop
 ```
 
-**Supported Backends:**
+**Pure Windows - No External Tools Required!**
+
+The Kawai validator runs as a native Windows process.
+No Docker Desktop. No WSL installation. No Linux VMs.
+Just start it and go.
+
+**Legacy Backends (deprecated):**
 - **Docker** — Uses `solanalabs/solana` image (recommended)
 - **WSL** — Uses Solana tools in WSL2
 - **Cloud** — Falls back to devnet
@@ -297,12 +302,12 @@ kawai/
 <summary><b>Validator Commands</b></summary>
 
 ```powershell
-kawai validator start [--reset] [--port 8899] [--backend auto|docker|wsl|cloud]
-kawai validator stop
-kawai validator status
-kawai validator logs [--lines 50]
-kawai validator install [--backend docker|wsl]
+kawai validator start [--reset] [--port 8899]    # Start native validator
+kawai validator stop                              # Stop validator
+kawai validator status                            # Check if running
+kawai validator logs                              # View epoch info
 ```
+*Native Windows implementation - no Docker/WSL needed!*
 </details>
 
 <details>
