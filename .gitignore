@@ -24,8 +24,9 @@ kawai_logs.csv
 kawai_config.json
 test-ledger/
 
-# Ignore all .md files except README.md
+# Ignore all .md files except README.md and VISION.md
 *.md
 !README.md
+!VISION.md
 
 
