@@ -1,0 +1,41 @@
+[package]
+name = "kawai-sdk"
+version = "0.1.0"
+edition = "2021"
+description = "Native Windows SDK for Solana development - No WSL required"
+license = "MIT"
+repository = "https://github.com/millw14/kawai"
+keywords = ["solana", "blockchain", "windows", "native", "sdk"]
+categories = ["development-tools", "cryptography::cryptocurrencies"]
+
+[dependencies]
+# Solana core
+solana-sdk = "1.18"
+solana-client = "1.18"
+solana-transaction-status = "1.18"
+
+# Async runtime
+tokio = { version = "1.36", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Logging
+tracing = "0.1"
+
+# Re-exports
+kawai-wallet = { path = "../kawai-wallet" }
+kawai-rpc = { path = "../kawai-rpc" }
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[features]
+default = []
+full = ["kawai-wallet/full", "kawai-rpc/full"]
+

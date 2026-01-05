@@ -1,0 +1,24 @@
+[package]
+name = "kawai-wallet"
+version = "0.1.0"
+edition = "2021"
+description = "Native Windows wallet management for Solana"
+license = "MIT"
+repository = "https://github.com/millw14/kawai"
+
+[dependencies]
+solana-sdk = "1.18"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+bs58 = "0.5"
+rand = "0.8"
+bip39 = "2.0"
+ed25519-dalek = "2.1"
+dirs = "5.0"
+
+[features]
+default = []
+full = ["hardware-wallet"]
+hardware-wallet = []
+

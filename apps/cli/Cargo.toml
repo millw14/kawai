@@ -1,0 +1,26 @@
+[package]
+name = "kawai-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Kawai CLI - Native Windows Solana development tools"
+license = "MIT"
+repository = "https://github.com/millw14/kawai"
+
+[[bin]]
+name = "kawai"
+path = "src/main.rs"
+
+[dependencies]
+kawai-sdk = { path = "../../crates/kawai-sdk" }
+kawai-wallet = { path = "../../crates/kawai-wallet" }
+kawai-rpc = { path = "../../crates/kawai-rpc" }
+
+tokio = { version = "1.36", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+colored = "2.1"
+indicatif = "0.17"
+dialoguer = "0.11"
+console = "0.15"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+

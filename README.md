@@ -1,14 +1,68 @@
-# Kawai Monitor
+# 🌸 Kawai
 
-**A lightweight, real-time Solana blockchain monitoring tool for tracking accounts, transactions, and network activity.**
+**Native Windows Solana Development Kit - No WSL Required**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-pink.svg)](https://opensource.org/licenses/MIT)
+[![Windows](https://img.shields.io/badge/platform-Windows-0078D6?logo=windows)](https://github.com/millw14/kawai)
+[![Rust](https://img.shields.io/badge/rust-1.75+-orange.svg)](https://www.rust-lang.org)
 
 ---
 
-## Overview
+## What is Kawai?
 
-Kawai Monitor is a standalone Rust application that connects to Solana RPC endpoints to monitor account balances, track transactions, and provide real-time alerts. Built for reliability and ease of use, it offers desktop notifications, CSV logging, and optional scam detection.
+Kawai brings **full Solana development to Windows** without WSL, VMs, or Linux. Pure native Windows performance with a beautiful interface.
 
-![Kawai Monitor](photo_5940298091359570915_x-removebg-preview.png)
+> **"Everything WSL Solana can do, but faster and prettier on Windows."**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    🌸 KAWAI SDK 🌸                          │
+│                                                             │
+│   ✅ Native Windows binaries (no WSL)                       │
+│   ✅ Beautiful CLI with colors & emojis                     │
+│   ✅ Wallet management built-in                             │
+│   ✅ One-command project setup                              │
+│   ✅ Faster than WSL (no VM overhead)                       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Quick Start
+
+### Download & Install
+
+```powershell
+# Coming soon: winget install kawai
+
+# For now, build from source:
+git clone https://github.com/millw14/kawai.git
+cd kawai
+cargo build --release
+```
+
+### Basic Usage
+
+```powershell
+# Create a wallet
+kawai wallet create main
+
+# Check balance
+kawai balance
+
+# Request devnet SOL
+kawai airdrop --amount 2
+
+# Transfer SOL
+kawai transfer <RECIPIENT_PUBKEY> 1.0
+
+# Monitor accounts
+kawai monitor --accounts <PUBKEY1>,<PUBKEY2>
+
+# Initialize new project
+kawai init my-solana-app
+```
 
 ---
 
@@ -16,263 +70,188 @@ Kawai Monitor is a standalone Rust application that connects to Solana RPC endpo
 
 | Feature | Description |
 |---------|-------------|
-| **Multi-Account Monitoring** | Track multiple Solana accounts simultaneously |
-| **Real-Time Updates** | Receive instant notifications for balance changes and transactions |
-| **Desktop Notifications** | System-level alerts for important events |
-| **CSV Logging** | Comprehensive event logging for analysis and auditing |
-| **Scam Detection** | Optional heuristics to flag suspicious transactions |
-| **Slot Tracking** | Monitor validator slot progression |
-| **Cross-Platform** | Works on Windows, macOS, and Linux |
-| **Zero Configuration** | Run immediately with sensible defaults |
+| 🔑 **Wallet Manager** | Create, import, export wallets. Mnemonic support. |
+| 💰 **Balance Checking** | Check any account on any network |
+| 🎁 **Airdrop** | Request devnet/testnet SOL instantly |
+| 💸 **Transfers** | Send SOL with transaction confirmation |
+| 👀 **Account Monitor** | Real-time balance tracking with alerts |
+| 🚀 **Project Init** | Scaffold new Solana projects |
+| 📊 **Network Info** | Slot, epoch, TPS, and more |
+| ⚙️ **Configuration** | Persistent settings |
 
 ---
 
-## Quick Start
+## SDK Usage (Rust)
 
-### Download Pre-built Binary
+Add Kawai to your project:
 
-1. Visit the [Releases](https://github.com/millw14/kawai/releases) page
-2. Download the binary for your operating system:
-   - **Windows**: `kawai.exe`
-   - **macOS**: `kawai-mac`
-   - **Linux**: `kawai-linux`
-3. Run from terminal:
-
-```bash
-./kawai --accounts YOUR_PUBKEY_HERE
+```toml
+[dependencies]
+kawai-sdk = "0.1"
+tokio = { version = "1", features = ["full"] }
 ```
 
-### Build from Source
+Use it:
 
-**Prerequisites:**
-- [Rust](https://rustup.rs/) 1.75 or later
+```rust
+use kawai_sdk::prelude::*;
 
-**Build Steps:**
+#[tokio::main]
+async fn main() -> Result<()> {
+    // Connect to devnet
+    let kawai = Kawai::devnet().await?;
 
-```bash
-# Clone the repository
-git clone https://github.com/millw14/kawai.git
-cd kawai
+    // Create a wallet
+    let wallet = KawaiKeypair::new();
+    println!("🌸 New wallet: {}", wallet.pubkey());
 
-# Build the release binary
-cargo build --release
+    // Request airdrop
+    kawai.airdrop(&wallet.pubkey(), sol!(2.0)).await?;
 
-# Run the application
-./target/release/kawai --accounts YOUR_PUBKEY_HERE
-```
+    // Check balance
+    let balance = kawai.balance(&wallet.pubkey()).await?;
+    println!("💰 Balance: {} SOL", balance.sol);
 
----
-
-## Usage
-
-### Command Line Options
-
-```bash
-# Monitor a single account
-./kawai --accounts YOUR_PUBKEY
-
-# Monitor multiple accounts (comma-separated)
-./kawai --accounts pubkey1,pubkey2,pubkey3
-
-# Use a custom RPC endpoint
-./kawai --rpc-url https://api.mainnet-beta.solana.com --accounts YOUR_PUBKEY
-
-# Enable scam detection
-./kawai --accounts YOUR_PUBKEY --scam-detect
-
-# Adjust polling interval (seconds)
-./kawai --accounts YOUR_PUBKEY --interval 10
-
-# Disable desktop notifications
-./kawai --accounts YOUR_PUBKEY --no-notifications
-```
-
-### Configuration File
-
-Create a `kawai_config.json` file in the same directory for persistent settings:
-
-```json
-{
-  "rpc_url": "https://api.devnet.solana.com",
-  "accounts": [
-    "YourPubkeyHere1",
-    "YourPubkeyHere2"
-  ],
-  "scam_detect": true,
-  "no_notifications": false,
-  "interval": 5
+    Ok(())
 }
 ```
 
-The application will automatically load this configuration file if present.
+---
+
+## Why Kawai over WSL?
+
+| Aspect | WSL2 | Kawai Native |
+|--------|------|--------------|
+| **Startup** | 2-5 sec VM boot | ⚡ Instant |
+| **Memory** | 2-8GB VM overhead | 📉 App only |
+| **File I/O** | Cross-FS penalty | 🚀 Native NTFS |
+| **Network** | Virtual adapter | 🌐 Direct sockets |
+| **Setup** | Complex | 📦 One install |
 
 ---
 
-## What It Monitors
-
-- **Account Updates**: Balance changes and account data modifications
-- **Transaction Activity**: Confirmed transactions on monitored accounts
-- **Slot Progression**: Network slot updates and validator status
-- **Suspicious Activity**: Large transfers and potentially fraudulent transactions (when enabled)
-
----
-
-## Output Examples
-
-### Console Output
+## Project Structure
 
 ```
-╔═══════════════════════════════════════════════════════╗
-║                                                       ║
-║         🌸  Kawai Monitor - Your Helper  🌸         ║
-║                                                       ║
-╚═══════════════════════════════════════════════════════╝
-
-Connecting to https://api.devnet.solana.com...
-Connected! Starting monitoring...
-
-Account ABC123... updated: 1000000 lamports (Slot: 12345)
-Transaction DEF456... confirmed (Slot: 12346)
-Slot update: 12347 (Parent: 12346)
+kawai/
+├── apps/
+│   ├── cli/              # kawai command-line tool
+│   └── desktop/          # GUI application (coming soon)
+├── crates/
+│   ├── kawai-sdk/        # Core Rust SDK
+│   ├── kawai-wallet/     # Wallet management
+│   └── kawai-rpc/        # RPC client
+├── packages/             # JavaScript SDK (coming soon)
+├── src/                  # Original monitor (legacy)
+└── installer/            # Windows installer
 ```
-
-### CSV Log Format
-
-All events are automatically logged to `kawai_logs.csv`:
-
-```csv
-Type,Details,Slot/Timestamp
-Account,Account ABC123... updated to 1000000 lamports,12345
-Tx,Transaction DEF456... confirmed,12346
-Slot,Slot update: 12347,12347
-```
-
----
-
-## Building for Different Platforms
-
-### Windows
-
-```bash
-cargo build --release --target x86_64-pc-windows-msvc
-```
-
-### macOS (Intel)
-
-```bash
-cargo build --release --target x86_64-apple-darwin
-```
-
-### macOS (Apple Silicon)
-
-```bash
-cargo build --release --target aarch64-apple-darwin
-```
-
-### Linux
-
-```bash
-cargo build --release --target x86_64-unknown-linux-gnu
-```
-
----
-
-## Requirements
-
-- **Rust**: Version 1.75 or later (for building from source)
-- **Internet Connection**: Required for RPC endpoint communication
-- **Desktop Notifications** (optional):
-  - **Windows**: Built-in support
-  - **macOS**: macOS 10.9 or later
-  - **Linux**: `libnotify` library (typically pre-installed)
-
----
-
-## Troubleshooting
-
-### Connection Issues
-
-- Verify your internet connection is active
-- Confirm the RPC URL is correct and accessible
-- Try alternative RPC endpoints (e.g., Helius, QuickNode, Triton)
-- Check if your firewall is blocking connections
-
-### Notification Problems
-
-- **Windows**: Verify notification settings in Windows Settings > System > Notifications
-- **macOS**: Check System Preferences > Notifications > kawai
-- **Linux**: Install libnotify: `sudo apt-get install libnotify-bin` (Ubuntu/Debian) or equivalent
-
-### Build Errors
-
-```bash
-# Update all dependencies
-cargo update
-
-# Clean build artifacts and rebuild
-cargo clean
-cargo build --release
-```
-
-### Common Issues
-
-- **"Account not found"**: Verify the public key is correct and the account exists on the network
-- **"RPC endpoint error"**: The endpoint may be rate-limited or unavailable; try a different endpoint
-- **High CPU usage**: Increase the polling interval with `--interval` flag (default: 5 seconds)
-
----
-
-## Customization
-
-### Modifying Messages
-
-Edit `src/main.rs` to customize console output messages and notification text.
-
-### Enhancing Scam Detection
-
-Modify the detection logic in `src/main.rs` to add:
-- Blacklist checking
-- Pattern recognition
-- Advanced heuristics
-- Integration with external scam databases
-
-### Adding Features
-
-The codebase is structured for easy extension. Key areas:
-- `src/main.rs`: Main application logic and monitoring loop
-- Configuration handling: Add new config options in the `Config` struct
-- Notification system: Extend with custom notification handlers
 
 ---
 
 ## Roadmap
 
-- [ ] Graphical user interface (Tauri-based)
-- [ ] Web dashboard for remote monitoring
-- [ ] Enhanced scam detection with ML-based patterns
-- [ ] Price tracking and portfolio valuation
-- [ ] Discord and Telegram notification integration
-- [ ] Historical data analysis and reporting
-- [ ] Multi-network support (extend to other chains)
+- [x] **v0.1** - Account monitoring, notifications, logging
+- [x] **v0.2** - SDK structure, wallet management, CLI
+- [ ] **v0.3** - Full transaction support, token operations
+- [ ] **v0.4** - Desktop GUI (Tauri)
+- [ ] **v0.5** - NFT tools, Anchor integration
+- [ ] **v1.0** - Complete Windows Solana toolkit
+
+---
+
+## Commands Reference
+
+### Wallet
+
+```powershell
+kawai wallet create <name>           # Create new wallet
+kawai wallet import <name>           # Import from private key
+kawai wallet list                    # List all wallets
+kawai wallet show [name]             # Show wallet details
+kawai wallet default <name>          # Set default wallet
+kawai wallet export <name>           # Export private key
+kawai wallet delete <name>           # Delete wallet
+kawai wallet mnemonic --words 24     # Generate mnemonic
+```
+
+### Operations
+
+```powershell
+kawai balance [--account <pk>] [--network devnet]
+kawai airdrop [--amount 1.0] [--account <pk>]
+kawai transfer <to> <amount> [--from <wallet>]
+kawai info [--network devnet]
+```
+
+### Monitoring
+
+```powershell
+kawai monitor --accounts <pk1>,<pk2> [--interval 5]
+```
+
+### Project
+
+```powershell
+kawai init <name> [--template basic|anchor|token]
+kawai config show
+kawai config network <devnet|testnet|mainnet>
+kawai config rpc <url>
+```
+
+---
+
+## Building from Source
+
+### Prerequisites
+
+- [Rust](https://rustup.rs/) 1.75+
+- Windows 10/11
+
+### Build
+
+```powershell
+# Clone
+git clone https://github.com/millw14/kawai.git
+cd kawai
+
+# Build all
+cargo build --release
+
+# Or build specific package
+cargo build -p kawai-sdk --release
+cargo build -p kawai-cli --release
+
+# Install CLI globally
+cargo install --path apps/cli
+```
+
+### Test
+
+```powershell
+cargo test --workspace
+```
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We need help with:
+
+- 🦀 **Rust** - Core SDK development
+- 🎨 **Frontend** - Desktop UI (Tauri + React)
+- 📚 **Docs** - Documentation and examples
+- 🧪 **Testing** - Test coverage and CI
 
 ---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - Build cool stuff! 🚀
 
 ---
 
-## Acknowledgments
-
-Built with the Solana Rust SDK and Tokio async runtime.
-
----
-
-**For questions, issues, or feature requests, please open an issue on GitHub.**
+<p align="center">
+  <b>Kawai</b> - Solana Development, Windows Native 🌸
+  <br>
+  <sub>Made with 💖 for Windows developers</sub>
+</p>
