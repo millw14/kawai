@@ -6,6 +6,10 @@
 [![Windows](https://img.shields.io/badge/platform-Windows-0078D6?logo=windows)](https://github.com/millw14/kawai)
 [![Rust](https://img.shields.io/badge/rust-1.75+-orange.svg)](https://www.rust-lang.org)
 
+<p align="center">
+  <img src="assets/images/kawai-chan.png" alt="Kawai-chan" width="300">
+</p>
+
 ---
 
 > **No WSL. No VM. No Linux. Just Windows.**
@@ -262,6 +266,14 @@ kawai/
 │   ├── kawai-validator/        # Local validator
 │   ├── kawai-build/            # Program compilation
 │   └── kawai-anchor/           # Anchor integration
+├── assets/                     # Images and misc files
+├── config/examples/            # Example configurations
+├── docs/
+│   ├── archive/                # Old documentation
+│   └── setup/                  # Setup guides
+├── scripts/
+│   ├── solana/                 # Solana installation scripts
+│   └── debug/                  # Debug utilities
 ├── packages/                   # JS SDK (coming soon)
 └── src/                        # Original monitor
 ```
