@@ -1,0 +1,24 @@
+[package]
+name = "kawai-anchor"
+version = "0.1.0"
+edition = "2021"
+description = "Anchor framework integration for Windows - No WSL required"
+license = "MIT"
+repository = "https://github.com/millw14/kawai"
+
+[dependencies]
+kawai-build = { path = "../kawai-build" }
+kawai-validator = { path = "../kawai-validator" }
+kawai-sdk = { path = "../kawai-sdk" }
+
+tokio = { version = "1.36", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+toml = "0.8"
+dirs = "5.0"
+
+[features]
+default = []
+

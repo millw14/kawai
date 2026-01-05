@@ -1,6 +1,6 @@
 //! Kawai CLI - Native Windows Solana Development Tools
 //!
-//! A beautiful CLI for Solana development on Windows.
+//! A complete CLI for Solana development on Windows.
 //! No WSL required!
 
 use clap::{Parser, Subcommand};
@@ -91,61 +91,180 @@ enum Commands {
         template: String,
     },
 
+    // ========== NEW COMMANDS ==========
+
+    /// 🖥️ Local validator management
+    #[command(subcommand)]
+    Validator(ValidatorCommands),
+
+    /// 🔨 Build Solana programs
+    #[command(subcommand)]
+    Build(BuildCommands),
+
+    /// ⚓ Anchor framework commands
+    #[command(subcommand)]
+    Anchor(AnchorCommands),
+
+    /// 🚢 Deploy programs
+    Deploy {
+        /// Path to .so file or project directory
+        path: Option<String>,
+
+        /// Target cluster (devnet, testnet, mainnet, localnet)
+        #[arg(short, long, default_value = "devnet")]
+        cluster: String,
+
+        /// Program keypair path
+        #[arg(short, long)]
+        keypair: Option<String>,
+    },
+
     /// ⚙️ Configuration
     #[command(subcommand)]
     Config(ConfigCommands),
+
+    /// 🔧 Toolchain management
+    #[command(subcommand)]
+    Toolchain(ToolchainCommands),
 }
 
 #[derive(Subcommand)]
 enum WalletCommands {
     /// Create a new wallet
-    Create {
-        /// Wallet name
-        name: String,
-    },
-
+    Create { name: String },
     /// Import wallet from private key
     Import {
-        /// Wallet name
         name: String,
-
-        /// Private key (base58)
         #[arg(short, long)]
         key: Option<String>,
     },
-
     /// List all wallets
     List,
-
     /// Show wallet details
-    Show {
-        /// Wallet name
-        name: Option<String>,
-    },
-
+    Show { name: Option<String> },
     /// Set default wallet
-    Default {
-        /// Wallet name
-        name: String,
-    },
-
+    Default { name: String },
     /// Export wallet private key
-    Export {
-        /// Wallet name
-        name: String,
-    },
-
+    Export { name: String },
     /// Delete a wallet
-    Delete {
-        /// Wallet name
-        name: String,
-    },
-
+    Delete { name: String },
     /// Generate new mnemonic
     Mnemonic {
-        /// Word count (12 or 24)
         #[arg(short, long, default_value_t = 12)]
         words: usize,
+    },
+}
+
+#[derive(Subcommand)]
+enum ValidatorCommands {
+    /// Start local test validator
+    Start {
+        /// Reset ledger on start
+        #[arg(short, long)]
+        reset: bool,
+
+        /// RPC port
+        #[arg(long, default_value_t = 8899)]
+        port: u16,
+
+        /// Backend (auto, docker, wsl, cloud)
+        #[arg(short, long, default_value = "auto")]
+        backend: String,
+    },
+    /// Stop local validator
+    Stop,
+    /// Check validator status
+    Status,
+    /// View validator logs
+    Logs {
+        /// Number of lines to show
+        #[arg(short, long, default_value_t = 50)]
+        lines: usize,
+    },
+    /// Install validator (Docker image or WSL tools)
+    Install {
+        /// Backend to install for (docker, wsl)
+        #[arg(short, long, default_value = "docker")]
+        backend: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum BuildCommands {
+    /// Build the program
+    Program {
+        /// Project directory
+        #[arg(default_value = ".")]
+        path: String,
+
+        /// Release mode
+        #[arg(short, long)]
+        release: bool,
+
+        /// Backend (auto, docker, wsl, cloud)
+        #[arg(short, long, default_value = "auto")]
+        backend: String,
+
+        /// Verbose output
+        #[arg(short, long)]
+        verbose: bool,
+    },
+    /// Check toolchain status
+    Status,
+    /// Install build toolchain
+    InstallToolchain {
+        /// Backend (docker, wsl)
+        #[arg(short, long, default_value = "docker")]
+        backend: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum AnchorCommands {
+    /// Initialize new Anchor project
+    Init {
+        /// Project name
+        name: String,
+    },
+    /// Build Anchor project
+    Build {
+        /// Project directory
+        #[arg(default_value = ".")]
+        path: String,
+
+        /// Verbose output
+        #[arg(short, long)]
+        verbose: bool,
+    },
+    /// Run Anchor tests
+    Test {
+        /// Project directory
+        #[arg(default_value = ".")]
+        path: String,
+
+        /// Skip build before test
+        #[arg(long)]
+        skip_build: bool,
+    },
+    /// Deploy Anchor program
+    Deploy {
+        /// Project directory
+        #[arg(default_value = ".")]
+        path: String,
+
+        /// Target cluster
+        #[arg(short, long, default_value = "devnet")]
+        cluster: String,
+    },
+    /// Generate IDL
+    Idl {
+        /// Project directory
+        #[arg(default_value = ".")]
+        path: String,
+
+        /// Output file
+        #[arg(short, long)]
+        output: Option<String>,
     },
 }
 
@@ -153,17 +272,33 @@ enum WalletCommands {
 enum ConfigCommands {
     /// Show current configuration
     Show,
-
     /// Set default network
-    Network {
-        /// Network name
-        network: String,
-    },
-
+    Network { network: String },
     /// Set default RPC URL
-    Rpc {
-        /// RPC URL
-        url: String,
+    Rpc { url: String },
+}
+
+#[derive(Subcommand)]
+enum ToolchainCommands {
+    /// Show toolchain status
+    Status,
+    /// Install Solana in WSL
+    InstallSolana {
+        /// Solana version
+        #[arg(short, long, default_value = "1.18.0")]
+        version: String,
+    },
+    /// Install Anchor in WSL
+    InstallAnchor {
+        /// Anchor version
+        #[arg(short, long, default_value = "0.29.0")]
+        version: String,
+    },
+    /// Pull Docker build image
+    PullDocker {
+        /// Docker image
+        #[arg(short, long, default_value = "projectserum/build:v0.27.0")]
+        image: String,
     },
 }
 
@@ -204,9 +339,23 @@ async fn main() {
         Commands::Init { name, template } => {
             commands::init::handle(name, template).await;
         }
+        Commands::Validator(cmd) => {
+            commands::validator::handle(cmd).await;
+        }
+        Commands::Build(cmd) => {
+            commands::build::handle(cmd).await;
+        }
+        Commands::Anchor(cmd) => {
+            commands::anchor::handle(cmd).await;
+        }
+        Commands::Deploy { path, cluster, keypair } => {
+            commands::deploy::handle(path, cluster, keypair).await;
+        }
         Commands::Config(config_cmd) => {
             commands::config::handle(config_cmd).await;
         }
+        Commands::Toolchain(cmd) => {
+            commands::toolchain::handle(cmd).await;
+        }
     }
 }
-

@@ -5,6 +5,9 @@ members = [
     "crates/kawai-sdk",
     "crates/kawai-wallet",
     "crates/kawai-rpc",
+    "crates/kawai-validator",
+    "crates/kawai-build",
+    "crates/kawai-anchor",
 ]
 
 # Root package - the original monitor
