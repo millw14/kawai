@@ -31,7 +31,7 @@ dirs = "5.0"
 rand = "0.8"
 bs58 = "0.5"
 sha2 = "0.10"
-base64 = { package = "base64", version = "0.21" }
+base64_crate = { package = "base64", version = "0.21" }
 
 # Progress bars (for CLI)
 indicatif = "0.17"

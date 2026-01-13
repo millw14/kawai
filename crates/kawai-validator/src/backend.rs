@@ -428,3 +428,52 @@ mod async_trait_impl {
 
 pub use async_trait::async_trait;
 
+/// Enum-based backend wrapper that avoids dyn trait async incompatibility
+pub enum BackendWrapper {
+    Docker(DockerBackend),
+    Wsl(WslBackend),
+    Cloud(CloudBackend),
+}
+
+impl BackendWrapper {
+    pub async fn is_available(&self) -> bool {
+        match self {
+            BackendWrapper::Docker(b) => b.is_available().await,
+            BackendWrapper::Wsl(b) => b.is_available().await,
+            BackendWrapper::Cloud(b) => b.is_available().await,
+        }
+    }
+
+    pub async fn start(&self, config: &ValidatorConfig) -> Result<()> {
+        match self {
+            BackendWrapper::Docker(b) => b.start(config).await,
+            BackendWrapper::Wsl(b) => b.start(config).await,
+            BackendWrapper::Cloud(b) => b.start(config).await,
+        }
+    }
+
+    pub async fn stop(&self) -> Result<()> {
+        match self {
+            BackendWrapper::Docker(b) => b.stop().await,
+            BackendWrapper::Wsl(b) => b.stop().await,
+            BackendWrapper::Cloud(b) => b.stop().await,
+        }
+    }
+
+    pub async fn is_running(&self) -> bool {
+        match self {
+            BackendWrapper::Docker(b) => b.is_running().await,
+            BackendWrapper::Wsl(b) => b.is_running().await,
+            BackendWrapper::Cloud(b) => b.is_running().await,
+        }
+    }
+
+    pub fn name(&self) -> &'static str {
+        match self {
+            BackendWrapper::Docker(b) => b.name(),
+            BackendWrapper::Wsl(b) => b.name(),
+            BackendWrapper::Cloud(b) => b.name(),
+        }
+    }
+}
+

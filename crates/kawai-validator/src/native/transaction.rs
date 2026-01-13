@@ -164,5 +164,3 @@ mod base64 {
     }
 }
 
-use base64_crate;
-

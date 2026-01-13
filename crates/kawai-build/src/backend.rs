@@ -11,9 +11,6 @@ use tokio::process::Command;
 /// Trait for build backends
 #[async_trait]
 pub trait BuildBackend: Send + Sync {
-    /// Check if backend is available
-    async fn is_available() -> bool where Self: Sized;
-
     /// Build a native Solana program
     async fn build_native(&self, project: &Project, config: &BuildConfig) -> Result<PathBuf>;
 
@@ -69,10 +66,6 @@ impl DockerBackend {
 
 #[async_trait]
 impl BuildBackend for DockerBackend {
-    async fn is_available() -> bool {
-        Self::is_available().await
-    }
-
     async fn build_native(&self, project: &Project, config: &BuildConfig) -> Result<PathBuf> {
         let build_cmd = if config.release {
             "cargo build-sbf --release"
@@ -204,10 +197,6 @@ impl Default for WslBackend {
 
 #[async_trait]
 impl BuildBackend for WslBackend {
-    async fn is_available() -> bool {
-        Self::is_available().await
-    }
-
     async fn build_native(&self, project: &Project, config: &BuildConfig) -> Result<PathBuf> {
         if !self.check_solana_installed().await {
             return Err(Error::ToolchainNotFound);
@@ -395,11 +384,6 @@ impl CloudBackend {
 
 #[async_trait]
 impl BuildBackend for CloudBackend {
-    async fn is_available() -> bool {
-        // Cloud is always available if internet works
-        true
-    }
-
     async fn build_native(&self, project: &Project, config: &BuildConfig) -> Result<PathBuf> {
         self.remote_build(project, config).await
     }

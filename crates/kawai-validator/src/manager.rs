@@ -1,6 +1,6 @@
 //! Validator manager - high-level API for managing local validators
 
-use crate::backend::{Backend, CloudBackend, DockerBackend, ValidatorBackend, WslBackend};
+use crate::backend::{Backend, BackendWrapper, CloudBackend, DockerBackend, WslBackend};
 use crate::config::{BackendPreference, ValidatorConfig};
 use crate::error::{Error, Result};
 use std::sync::Arc;
@@ -9,7 +9,7 @@ use tokio::sync::RwLock;
 /// High-level validator manager
 pub struct Validator {
     config: ValidatorConfig,
-    backend: Arc<dyn ValidatorBackend>,
+    backend: Arc<BackendWrapper>,
     state: Arc<RwLock<ValidatorState>>,
 }
 
@@ -39,7 +39,7 @@ impl Validator {
     /// Create with Docker backend
     pub fn docker() -> Result<Self> {
         let config = ValidatorConfig::default().backend(BackendPreference::Docker);
-        let backend: Arc<dyn ValidatorBackend> = Arc::new(DockerBackend::new(&config.docker_image));
+        let backend = Arc::new(BackendWrapper::Docker(DockerBackend::new(&config.docker_image)));
         
         Ok(Self {
             config,
@@ -51,7 +51,7 @@ impl Validator {
     /// Create with WSL backend
     pub fn wsl() -> Result<Self> {
         let config = ValidatorConfig::default().backend(BackendPreference::Wsl);
-        let backend: Arc<dyn ValidatorBackend> = Arc::new(WslBackend::new());
+        let backend = Arc::new(BackendWrapper::Wsl(WslBackend::new()));
         
         Ok(Self {
             config,
@@ -63,7 +63,7 @@ impl Validator {
     /// Create with cloud backend (devnet)
     pub fn cloud() -> Result<Self> {
         let config = ValidatorConfig::default().backend(BackendPreference::Cloud);
-        let backend: Arc<dyn ValidatorBackend> = Arc::new(CloudBackend::devnet());
+        let backend = Arc::new(BackendWrapper::Cloud(CloudBackend::devnet()));
         
         Ok(Self {
             config,
@@ -73,24 +73,24 @@ impl Validator {
     }
 
     /// Select the appropriate backend based on configuration
-    async fn select_backend(config: &ValidatorConfig) -> Result<Arc<dyn ValidatorBackend>> {
+    async fn select_backend(config: &ValidatorConfig) -> Result<Arc<BackendWrapper>> {
         match config.backend {
             BackendPreference::Docker => {
                 if Backend::docker_available().await {
-                    Ok(Arc::new(DockerBackend::new(&config.docker_image)))
+                    Ok(Arc::new(BackendWrapper::Docker(DockerBackend::new(&config.docker_image))))
                 } else {
                     Err(Error::DockerNotAvailable)
                 }
             }
             BackendPreference::Wsl => {
                 if Backend::wsl_available().await {
-                    Ok(Arc::new(WslBackend::new()))
+                    Ok(Arc::new(BackendWrapper::Wsl(WslBackend::new())))
                 } else {
                     Err(Error::WslNotAvailable)
                 }
             }
             BackendPreference::Cloud => {
-                Ok(Arc::new(CloudBackend::devnet()))
+                Ok(Arc::new(BackendWrapper::Cloud(CloudBackend::devnet())))
             }
             BackendPreference::Native => {
                 // Native not yet implemented
@@ -99,13 +99,13 @@ impl Validator {
             BackendPreference::Auto => {
                 // Try backends in order of preference
                 if Backend::docker_available().await {
-                    return Ok(Arc::new(DockerBackend::new(&config.docker_image)));
+                    return Ok(Arc::new(BackendWrapper::Docker(DockerBackend::new(&config.docker_image))));
                 }
                 if Backend::wsl_available().await {
-                    return Ok(Arc::new(WslBackend::new()));
+                    return Ok(Arc::new(BackendWrapper::Wsl(WslBackend::new())));
                 }
                 // Fall back to cloud
-                Ok(Arc::new(CloudBackend::devnet()))
+                Ok(Arc::new(BackendWrapper::Cloud(CloudBackend::devnet())))
             }
         }
     }

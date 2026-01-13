@@ -11,18 +11,18 @@ name = "kawai"
 path = "src/main.rs"
 
 [dependencies]
-kawai-sdk = { path = "../../crates/kawai-sdk" }
-kawai-wallet = { path = "../../crates/kawai-wallet" }
-kawai-rpc = { path = "../../crates/kawai-rpc" }
-kawai-validator = { path = "../../crates/kawai-validator" }
-kawai-build = { path = "../../crates/kawai-build" }
-kawai-anchor = { path = "../../crates/kawai-anchor" }
+# kawai-sdk = { path = "../../crates/kawai-sdk" }
+# kawai-wallet = { path = "../../crates/kawai-wallet" }
+# kawai-rpc = { path = "../../crates/kawai-rpc" }
+# kawai-validator = { path = "../../crates/kawai-validator" }
+# kawai-build = { path = "../../crates/kawai-build" }
+# kawai-anchor = { path = "../../crates/kawai-anchor" }
 
 tokio = { version = "1.36", features = ["full"] }
 clap = { version = "4", features = ["derive"] }
 colored = "2.1"
 indicatif = "0.17"
-dialoguer = "0.11"
+dialoguer = "0.10"
 console = "0.15"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
