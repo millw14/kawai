@@ -12,6 +12,11 @@
 
 ---
 
+### 🌐 Community
+**Contract Address:** `6ggxkzDCAB3hjiRFUGdiNfcW2viET3REtsbEmVFXpump`
+
+---
+
 > **No WSL. No VM. No Linux. Just Windows.**
 
 Kawai is a native Windows toolkit for Solana blockchain development. Build, test, and deploy Solana programs entirely on Windows with better performance than WSL.
