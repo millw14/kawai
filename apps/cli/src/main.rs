@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 use colored::*;
+mod waifu_art;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::time::Duration;
 use tokio::time::sleep;
@@ -86,40 +87,14 @@ enum AnchorCommands {
     },
 }
 
-fn print_mascot() {
-    let mascot = r#"
-         |:::|.::::::;
-        🌸🌸🌸🌸🌸🌸🌸:::::::
-    🌸❤️❤️❤️❤️:::::::::::| 
-         |::/.::::::/.
-        "Nyaa~ Let's build 
-         some programs! 🐾"  |:|.::::/./.:
-        "Kawai-chan is 
-         ready to help~ 😻"  `:|.:::|.|.::
-    :::;/..;;;;;;-'.:;;;-'
-    :;/.;;/  -..::'''...::
-    "#;
-    println!("{}", mascot.bright_magenta());
-}
-
-fn print_banner() {
-    println!("{}", "╔═══════════════════════════════════════════════════════╗".bright_cyan());
-    println!("{}", "║                                                       ║".bright_cyan());
-    println!("{}", "║     🌸  KAWAI - Solana Dev Kit for Windows  🌸      ║".bright_cyan());
-    println!("{}", "║              No WSL. Pure Performance.                ║".bright_cyan());
-    println!("{}", "║                                                       ║".bright_cyan());
-    println!("{}", "╚═══════════════════════════════════════════════════════╝".bright_cyan());
-    println!();
-}
-
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
-    print_banner();
+    waifu_art::print_waifu();
 
     match cli.command {
         Commands::Wallet(WalletCommands::Create { name }) => {
-            print_mascot();
+            waifu_art::print_waifu();
             println!("✨ {} '{}'...", "Creating wallet".bold(), name.cyan());
             let pb = ProgressBar::new(100);
             pb.set_style(ProgressStyle::default_bar()
