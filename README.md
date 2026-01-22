@@ -13,7 +13,7 @@
 ---
 
 ### 🌐 Community
-**Contract Address:** `6ggxkzDCAB3hjiRFUGdiNfcW2viET3REtsbEmVFXpump`
+**Contract Address:** `oops`
 
 ---
 
